@@ -15,7 +15,7 @@
     /* background: greenyellow; */
 }
 .input{
-    max-width: 10%;
+    max-width: 15%;
     height:auto;
     min-height: 26px;
     border:none;
@@ -33,6 +33,7 @@
 }
 .selected-item >span{
     margin-right: 5px;
+    margin-left: 5px;
     cursor: pointer;
     color:#ffff;
 }
@@ -65,4 +66,7 @@ color: red;
 }
 .showList >div:hover{
 background: #aaaa;
+}
+.creater{
+    background: #f3f3;
 }
