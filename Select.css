@@ -4,18 +4,22 @@
     position: relative;
 }
 .main {
-    width:auto;
+   display:flex;
+   border: #aaaa solid 2px;
+   position: relative;
+    /* background: greenyellow; */
+}
+.main-selected{
+    width:90%;
     height:auto;
     /* box-sizing: border-box; */
-    border: #aaaa solid 2px;
     display: flex;
     flex-wrap: wrap;
     padding: 2px;
-    
-    /* background: greenyellow; */
+   
 }
 .input{
-    max-width: 15%;
+    max-width: 100%;
     height:auto;
     min-height: 26px;
     border:none;
@@ -66,7 +70,19 @@ color: red;
 }
 .showList >div:hover{
 background: #aaaa;
+cursor: pointer;
 }
 .creater{
     background: #f3f3;
+}
+.cansel-total{
+    position:absolute;
+    box-sizing: border-box;
+    left:0;
+    top: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content:space-around;
+    width: 10%;
 }

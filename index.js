@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./Select.css";
-export default function SelectComponent({ type=false, list=[],defaultSelected=[],onChange=(value)=>console.log("selected",value) }) {
-  const [selected, setselected] = useState(defaultSelected);
+export default function SelectComponent({
+  type = false,
+  creatable = true,
+  list = [],
+  defaultSelected,
+  onChange = (value) => console.log("selected", value),
+}) {
+  const [selected, setselected] = useState([]);
   const [showList, setshowList] = useState(false);
-  const [selectList, setselectList] = useState(list);
+  const [selectList, setselectList] = useState([]);
   const [selectList1, setselectList1] = useState("empty");
   const [inputValue, setinputValue] = useState("");
   const handleShowList = () => {
@@ -11,17 +17,17 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
     document.getElementById("input").focus();
   };
   const hadleSelect = (item) => {
-   
     if (type) {
-      let copy =[...selected]
-      copy.push(item)
-      setselected(copy)
-      let newList = selectList.filter((i) => Object.keys(i)[0]!= Object.keys(item)[0]);
+      // let copy =[...selected]
+      // copy.push(item)
+      // setselected(copy)
+      setselected([...selected, item]);
+      let newList = selectList.filter((i) => i.value != item.value);
       setselectList(newList);
     } else {
-      let newList = selectList.filter((i) => i != item);
+      let newList = selectList.filter((i) => i.value != item.value);
       if (selected.length != 0) {
-        if (list.some((item) => item == selected[0])) {
+        if (list.some((item) => item.value == selected[0].value)) {
           newList = [...newList, selected[0]];
         }
       }
@@ -32,12 +38,13 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
     document.getElementById("input").focus();
   };
   const cancelSelect = (item) => {
-    let newList = selected.filter((i) => Object.keys(i)[0] != Object.keys(item)[0]);
+    let newList = selected.filter((i) => i.value != item.value);
     setselected(newList);
-    if (list.some((item) => Object.keys(item)[0] == Object.keys(selected[0])[0] )) {
-      let copy=[...selectList]
-      copy.push(item)
-      setselectList(copy)
+    if (list.some((item) => item.value == selected[0].value)) {
+      // let copy=[...selectList]
+      // copy.push(item)
+      // setselectList(copy)
+      setselectList([...selectList, item]);
     }
   };
   const searchSelect = (event) => {
@@ -47,7 +54,7 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
       setselectList1("empty");
     } else {
       let newList = selectList.filter(
-        (item) => Object.values(item)[0].includes(event.target.value) == true
+        (item) => item.label.includes(event.target.value) == true
       );
       setselectList1(newList);
     }
@@ -57,18 +64,22 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
   };
   const handleCreator = () => {
     if (inputValue != "") {
-      let newObject=new Object();
-      newObject[inputValue]=inputValue;
+      let newObject = new Object();
+      newObject.label = inputValue;
+      newObject.value = inputValue;
 
       if (type) {
-        let copy=[...selected]
-        copy.push(newObject)
+        let copy = [...selected];
+        copy.push(newObject);
         setselected(copy);
       } else {
-        if (selected[0]!=undefined && list.some((item) => Object.keys(item)[0] == Object.keys(selected[0])[0])) {
-        let copy=[...selectList]
-        copy.push(selected[0])
-        setselectList(copy);
+        if (
+          selected[0] != undefined &&
+          list.some((item) => item.value == selected[0].value)
+        ) {
+          let copy = [...selectList];
+          copy.push(selected[0]);
+          setselectList(copy);
         }
         setselected([newObject]);
       }
@@ -78,36 +89,65 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
     }
   };
   useEffect(() => {
-    onChange(selected)
+    onChange(selected);
   }, [selected]);
+  useEffect(() => {
+    if (defaultSelected) setselected(defaultSelected);
+    console.log("moteza jooonnnnnnn", defaultSelected);
+  }, [defaultSelected]);
+  useEffect(() => {
+    if(Array.isArray(defaultSelected)){
+      let newlist = list.filter(
+        (item) => defaultSelected.some((i) => i.value == item.value) != true
+        );
+        setselectList(newlist);
+      }
+      else{
+        setselectList(list)
+      }
+  }, [list]);
+  console.log("klkjkjkk", selected);
   return (
     <>
       {showList && <div className="back-grop" onClick={handleBackGrap}></div>}
       <div className="select-box">
         <div className="main" onClick={handleShowList}>
-          {selected.map((item) => {
+          <div className="main-selected">
+          {selected.map((item, index) => {
             return (
-              <label htmlFor="input" className="selected-item">
+              <label key={index} htmlFor="input" className="selected-item">
                 <span onClick={() => cancelSelect(item)}>X</span>
-                {Object.values(item)}
+                {item.label}
               </label>
             );
           })}
 
           <input
+            style={{ width: `${(inputValue.length + 5) * 7}px` }}
+            autocomplete="off"
             id="input"
             onChange={(e) => searchSelect(e)}
             className="input"
             value={inputValue}
           />
+          </div>
+          
+        <div className="cansel-total">
+        <span >X</span>
+        <span >X</span>
+        </div>
         </div>
         {selectList1 == "empty"
           ? showList && (
               <div className="showList">
-                {selectList.map((item) => {
-                  return <div onClick={() => hadleSelect(item)}>{Object.values(item)}</div>;
+                {selectList.map((item, index) => {
+                  return (
+                    <div key={index} onClick={() => hadleSelect(item)}>
+                      {item.label}
+                    </div>
+                  );
                 })}
-                {selectList.length==0 && (
+                {selectList.length == 0 && (
                   <div
                     style={{
                       fontSize: "40px",
@@ -122,23 +162,30 @@ export default function SelectComponent({ type=false, list=[],defaultSelected=[]
             )
           : showList && (
               <div className="showList">
-                {selectList1.map((item) => {
-                  return <div onClick={() => hadleSelect(item)}>{Object.values(item)}</div>;
+                {selectList1.map((item, index) => {
+                  return (
+                    <div key={index} onClick={() => hadleSelect(item)}>
+                      {item.label}
+                    </div>
+                  );
                 })}
-                {(inputValue!="" || setselectList.length==0) && selectList1.length==0 && (
-                  <div
-                    style={{
-                      fontSize: "40px",
-                      color: "red",
-                      textAlign: "center",
-                    }}
-                  >
-                    Not Found
+                {(inputValue != "" || setselectList.length == 0) &&
+                  selectList1.length == 0 && (
+                    <div
+                      style={{
+                        fontSize: "40px",
+                        color: "red",
+                        textAlign: "center",
+                      }}
+                    >
+                      Not Found
+                    </div>
+                  )}
+                {creatable && (
+                  <div className="creater" onClick={handleCreator}>
+                    Create {inputValue}
                   </div>
                 )}
-                <div className="creater" onClick={handleCreator}>
-                  Create {inputValue}
-                </div>
               </div>
             )}
       </div>
