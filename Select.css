@@ -86,3 +86,6 @@ cursor: pointer;
     justify-content:space-around;
     width: 10%;
 }
+.cansel-total >span{
+cursor: pointer;
+}

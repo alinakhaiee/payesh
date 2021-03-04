@@ -47,6 +47,10 @@ export default function SelectComponent({
       setselectList([...selectList, item]);
     }
   };
+  const cancelSelects=()=>{
+    setselectList(list);
+    setselected([])
+  }
   const searchSelect = (event) => {
     setshowList(true);
     setinputValue(event.target.value);
@@ -133,7 +137,7 @@ export default function SelectComponent({
           </div>
           
         <div className="cansel-total">
-        <span >X</span>
+        <span onClick={cancelSelects}>X</span>
         <span >X</span>
         </div>
         </div>
